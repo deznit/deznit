@@ -1,5 +1,5 @@
 module.exports = {
-  pathPrefix: "/deznit",
+  // pathPrefix: "/deznit",
   siteMetadata: {
     title: `Gatsby Default Starter`,
     description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
@@ -38,6 +38,7 @@ module.exports = {
         path: `${__dirname}/src/content/posts`,
       },
     },
+
     // plugin for mdx
     {
       resolve: `gatsby-plugin-mdx`,
@@ -52,6 +53,12 @@ module.exports = {
               showLanguage: true,
             },
           },
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 1200,
+            },
+          },
         ],
       },
     },
@@ -59,20 +66,9 @@ module.exports = {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [
+          `gatsby-remark-copy-linked-files`,
           {
             resolve: `gatsby-remark-prismjs`,
-          },
-          {
-            resolve: `gatsby-remark-images`,
-            options: {
-              maxWidth: 1200,
-            },
-          },
-          {
-            resolve: "gatsby-remark-copy-linked-files",
-            options: {
-              destinationDir: "resources/post",
-            },
           },
         ],
       },

@@ -2,6 +2,8 @@ import { Link } from "gatsby"
 import PropTypes from "prop-types"
 import React from "react"
 import Img from "gatsby-image"
+// @ts-ignore
+import Logo from "../../static/images/logo.svg"
 
 const Header = ({ siteTitle, isHome }) => (
   <header
@@ -21,11 +23,7 @@ const Header = ({ siteTitle, isHome }) => (
       <div className="site-mast">
         <div className="site-mast-left">
           <Link to="/">
-            <img
-              className="site-logo"
-              src={"images/logo.svg"}
-              alt={siteTitle}
-            />
+            <img className="site-logo" src={Logo} alt={siteTitle} />
           </Link>
         </div>
         <nav className="site-nav">
