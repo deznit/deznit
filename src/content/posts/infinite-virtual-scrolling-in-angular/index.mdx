@@ -1,0 +1,158 @@
+---
+path: "/infinite-virtual-scrolling-in-angular"
+date: "06 September, 2020"
+author: "Anoop Nair"
+author_image: "images/authorImages/anoop.png"
+feature_image: "./img/feature.png"
+title: "Infinite Virtual Scrolling In Angular"
+tags: "Angular"
+featured: true
+---
+
+> In this post we will see what is virtual scroll, its importance and then we will implement it using Angular CDK.
+
+So to start with let's understand what exactly is virtual scroll. So let's say you have thousands of values in a list and with virtual scroll you can load just the values thats visible inside the viewport (on screen), i.e suppose only 10 elements fits inside the viewport then only 10 will be loaded to the DOM and as you scroll down new elements will be loaded and old ones that are not in viewport will be removed from DOM.
+
+## Getting Started 🚀
+
+We will need to install Angular CDK and import the ScrollingModule from it.
+
+<CodeTitle title="terminal" language="shell" />
+
+```shell
+
+$ npm install @angular/cdk
+
+```
+
+<CodeTitle title="app.module.ts" language="ts" />
+
+```ts
+
+// ... other imports
+import { ScrollingModule } from '@angular/cdk/scrolling';
+// for making http req.
+import { HttpClientModule } from '@angular/common/http';
+
+@NgModule({
+imports: [
+    // ...
+    ScrollingModule,
+    HttpClientModule
+]
+})
+
+```
+
+For dummy data to display in the list we will use JSONPlaceholder . And to fetch the data we will make a simple service, I am fetching the comments here you can go through the docs for other data, or you can use your own data.
+
+<CodeTitle title="placeholder.service.ts" language="ts" />
+
+```ts
+
+
+import { Injectable } from "@angular/core"
+import { HttpClient } from "@angular/common/http"
+
+@Injectable({
+  providedIn: "root",
+})
+export class PlaceholderService {
+  constructor(private http: HttpClient) {}
+  getPlaceholder(start, limit) {
+    return this.http.get(
+      {`https://jsonplaceholder.typicode.com/comments?_start=${start}&_limit=${limit}`}
+    )
+  }
+}
+
+/*
+We will get 500 comments in following format.
+[
+    {
+        body: string,
+        email: string,
+        name: string,
+        id: number,
+        postId: number
+    }
+    //.....
+]
+
+*/
+
+```
+
+Now we can use the data in our component for this example we will use the app.component.
+
+<CodeTitle title="app.component.ts" language="ts" />
+
+```ts
+import { Component, OnInit } from "@angular/core"
+import { PlaceholderService } from "./services/placeholder.service"
+
+@Component({
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
+})
+export class AppComponent implements OnInit {
+  constructor(private placeholderService: PlaceholderService) {}
+
+  items: any
+
+  ngOnInit() {
+    this.placeholderService
+      .getPlaceholder(this.start, this.limit)
+      .subscribe(data => {
+        console.log(data)
+        this.items = data
+      })
+  }
+}
+```
+
+## Finally The Good Part 😀
+
+Now we can loop over the data and display it in our viewport. cdk-virtual-scroll-viewport is our viewport wrapper, and the data visible inside this viewort at any point will only be loaded to DOM. *cdkVirtualFor is similar to *ngFor that we use to loop over the data. The itemSize property must be set and it's value is the height of element inside the wrapper , here in this case we will be setting our card height to 100px. To add some animation we can use the [Animate.css](https://www.npmjs.com/package/animate.css) package.
+
+<CodeTitle title="app.component.html" language="html" />
+
+```html
+<cdk-virtual-scroll-viewport itemSize="100">
+  <div
+    *cdkVirtualFor="let item of items; let i = index"
+    class="animated fadeInUp card"
+  >
+    {{ i }}. {{ item.name }}
+  </div>
+</cdk-virtual-scroll-viewport>
+```
+
+<CodeTitle title="app.component.scss" language="scss" />
+
+```scss
+cdk-virtual-scroll-viewport {
+  margin: 5rem;
+  height: 90vh;
+  // setting height of viewport is really important for virtual scroll to work
+  .card {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    height: 100px;
+    padding: 10px;
+    margin: 20px;
+    font-size: 1.5rem;
+    border-radius: 4px;
+  }
+}
+```
+
+> Please note that setting height of the viewport is really important for this to work.
+
+## Results 🎉
+
+As you can see in the video below only 12 elements are loaded at a time on to the DOM in this case and as we scroll down new elements are loaded and the old ones which arfe not in the viewport are removed.
+
+![Result](gifs/infinite-virtual-scrolling-in-angular/result.gif)

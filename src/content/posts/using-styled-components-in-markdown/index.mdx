@@ -1,0 +1,288 @@
+---
+path: "/using-styled-components-in-gatsby-markdown-posts"
+date: "04 September, 2020"
+author: "Anoop Nair"
+author_image: "images/authorImages/anoop.png"
+feature_image: "./img/feature.png"
+title: "Using Styled Components in Gatsby Markdown Posts"
+tags: "Gatsby"
+featured: false
+---
+
+> This post will answer you question about "How can I use my Styled Components / JSX in Markdown files?" We will look how we can setup and use MDX to display our Styled Components in Gatsby Markdown post.
+
+## MDX
+
+What MDX does is it let's us write JSX in Markdown files. We can easily import the styled components and use it in markdown files. The file extension is .mdx. This blog is built on Gatsby and this post is written in MDX. You can read more about MDX on their [official website](https://mdxjs.com/).
+
+## Adding MDX to Gatsby
+
+We have to install gatsby's plugin for MDX i.e. gatsby-plugin-mdx and other dependencies for MDX to work.
+
+```shell
+
+yarn add gatsby-plugin-mdx @mdx-js/mdx @mdx-js/react
+
+```
+
+## Adding Source Filesystem Plugin
+
+For a blog to work we need to programmatically create pages from our .mdx files. For this example the posts (MDX files) will be in /src/posts and we will use gatsby-source-filesystem plugin and createPages to create pages based on the path from our posts Frontmatter.
+
+```shell
+
+yarn add gatsby-source-filesystem
+
+```
+
+## Configuring Gatsby
+
+We will have to configure gatsby to use the plugin for that we will have to make the following changes in gatsby.config.js
+
+<CodeTitle title="gatsby-config.js" language="js" />
+
+```js
+module.exports = {
+  plugins: [
+    // ...Other plugins that you want to use.
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `posts`,
+        path: `${__dirname}/src/posts`,
+      },
+    },
+    {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        extensions: [`.mdx`, `.md`],
+        gatsbyRemarkPlugins: [
+          // optional plugin if you want to use code syntax highlighting
+          // $ yarn add gatsby-transformer-remark gatsby-remark-prismjs prismjs
+          {
+            resolve: `gatsby-remark-prismjs`,
+            options: {
+              showLanguage: true,
+            },
+          },
+        ],
+      },
+    },
+  ],
+}
+```
+
+## Creating Mdx Post
+
+Let's add a simple mdx post(index.mdx) in /src/posts/15-09-2019-post-one without any styled component for now, later on we will add our styled components and make the post look more interesting
+
+<CodeTitle title="07-09-2020-post-one/index.mdx" language="mdx" />
+
+```mdx
+---
+path: "/postOne"
+date: "07-09-2020"
+author: "Anoop"
+title: "Post 1"
+---
+
+This is a post one we will be using styled components in this post later onn.
+```
+
+## Creating Pages Programmatically
+
+To create pages programmatically we will have to edit gatsby-node.js file. We will first query all the posts in /src/posts folder gatsby-source-filesystem plugin helps in this. And then loop through all the posts and use createPage to create pages based on the path variable in the Frontmatter of our post.
+
+<CodeTitle title="gatsby-node.js" language="js" />
+
+```js
+const path = require("path")
+exports.createPages = async ({ graphql, actions, reporter }) => {
+  const { createPage } = actions
+
+  // Using graphql to query all the .mdx posts
+  const mdxPosts = await graphql(
+    `
+      query {
+        allMdx {
+          edges {
+            node {
+              id
+              frontmatter {
+                path
+              }
+            }
+          }
+        }
+      }
+    `
+  )
+
+  if (mdxPosts.errors) {
+    reporter.panicOnBuild("ERROR: In Querying Posts")
+  }
+
+  // Create blog post pages.
+  const posts = mdxPosts.data.allMdx.edges
+
+  // We'll call `createPage` for each mdxPosts
+
+  posts.map(({ node }, index) => {
+    createPage({
+      // this is the path of post we will specify the path in posts frontmatter
+      path: node.frontmatter.path,
+      // This component/Layout for our MDX posts
+      // change the path of layout according to your folder structure.
+      component: path.resolve(`./src/pages/post.js`),
+      // We will use the id (which is unique) to query our post data later onn.
+
+      context: { id: node.id },
+    })
+  })
+}
+```
+
+## Blog Index Page
+
+Before we create a layout for our post let us make a blog index page to list all the post we have for that we will edit the index.js page and query all the posts and display it on the page. We will be querying the id of the post/node frontmatter of the post (path and title) and then the excerpt, pruneLength: 100 param will truncate and give us excerpt of 100 characters , it's an optional param.
+
+We get an array of posts in data.allMdx.edges and we will map through each posts and display it on the page.
+
+<CodeTitle title="index.js" language="jsx" />
+
+```jsx
+import React from "react"
+import { graphql, Link } from "gatsby"
+import Layout from "../components/layout"
+
+const IndexPage = ({ data }) => (
+  <Layout>
+    {data.allMdx.edges.map(post => (
+      <>
+        <Link to={post.node.frontmatter.path}>
+          <h3>{post.node.frontmatter.title}</h3>
+        </Link>
+        <p>{post.node.excerpt}</p>
+      </>
+    ))}
+  </Layout>
+)
+export const data = graphql`
+  query BlogIndex {
+    allMdx {
+      edges {
+        node {
+          id
+          excerpt(pruneLength: 100)
+          frontmatter {
+            path
+            title
+          }
+        }
+      }
+    }
+  }
+`
+
+export default IndexPage
+```
+
+## Creating Post Layout
+
+The final step before we can add our beautiful styled components to our markdown post is to create a layout for posts and pass the styled components to render in mdx.
+
+> The styled components are placed in /src/components/styled and all the styled components are exported using index.js file. To learn more about styled components please follow this post about using [Styled Components In Gatsby](https://www.deznit.com/using-styled-components-in-gatsby/).
+
+MDXProvider is used to pass the components (In this case styled components) to your mdx files. MDXRenderer is used to render the markdown content. To query the post we will use the id that we passed as context (context: {id: node.id} ) from gatsby-node.js. all the mdx content we need is in "body" of a mdx post, so we will be rendering mdx.body in MDXRenderer.
+
+<CodeTitle title="pages/post.js" language="jsx" />
+
+```jsx
+import React from "react"
+import { graphql } from "gatsby"
+// Importing all the styled components as Components.
+// You can import specific styled components that you need
+import * as Components from "../components/styled"
+import { MDXProvider } from "@mdx-js/react"
+import { MDXRenderer } from "gatsby-plugin-mdx"
+
+// destructuring data object from the query
+const PostLayout = ({ data: { mdx } }) => {
+  return (
+    <>
+      <div style={{ padding: "1rem" }}>
+        <Components.H1 style={{ marginBottom: "3rem" }}>
+          {mdx.frontmatter.title}
+        </Components.H1>
+        <MDXProvider components={Components}>
+          <MDXRenderer>{mdx.body}</MDXRenderer>
+        </MDXProvider>
+      </div>
+    </>
+  )
+}
+// body contains all the mdx content we write after the frontmatter.
+export const pageQuery = graphql`
+  query BlogPostQuery($id: String) {
+    mdx(id: { eq: $id }) {
+      id
+      body
+      frontmatter {
+        title
+      }
+    }
+  }
+`
+
+export default PostLayout
+```
+
+The styled component we have for this example is Blockquote and H1. They are currently very simple components where we pass color for the Blockquote left border as props.
+
+<CodeTitle title="h1.js" language="js" />
+
+```jsx
+import styled from "styled-components"
+
+export default styled.h1`
+  margin: 0 0 5px 0;
+  padding: 0;
+  font-weight: 500;
+`
+```
+
+<CodeTitle title="blockquote.js" language="js" />
+
+```jsx
+import styled from "styled-components"
+
+export default styled.blockquote`
+  margin: 0 0 5px 5px;
+  padding-left: 10px;
+  border-left: 4px solid ${props => props.color};
+`
+```
+
+## Using our styled component in mdx posts
+
+Pheww... finally we have completed all the setup needed for using styled components in our markdown posts. The final step is actually the simplest of all i.e. using our styled components for a simple example we will be editing our markdown file and adding the styled blockquote component.
+
+<CodeTitle title="07-09-2020-post-one/index.mdx" language="mdx" />
+
+```mdx
+---
+path: "/postOne"
+date: "07-09-2020"
+author: "Anoop"
+title: "Post 1"
+---
+
+This is a post one we will be using styled components in this post later onn.
+
+<Blockquote color="goldenrod">
+  Yeah.. we did it this is our styled blockquote component. We passed
+  "goldenrod" color as props for the border-left. This is a very simple example
+  but the possibilities are endless. Like this blog post is using MDX and styled
+  components to style everything from Headings, paragraphs to Blockquotes.
+</Blockquote>
+```

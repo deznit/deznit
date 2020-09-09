@@ -1,0 +1,144 @@
+---
+path: "/using-styled-components-in-gatsby"
+date: "02 September, 2020"
+author: "Anoop Nair"
+author_image: "images/authorImages/anoop.png"
+feature_image: "./img/feature.png"
+title: "Using Styled Components in Gatsby"
+tags: "Gatsby"
+featured: false
+---
+
+## Why Styled Components ?
+
+> In this post we will be configuring Gatsby to use styled components , create our fist component and use it.
+
+When we create a website we have many elements that we will reuse throughout the website like buttons, cards , headings etc. Styled components help us do exactly the same , we can create a components like button once and reuse it.
+
+## Packages that we need
+
+We need the gatsby plugin gatsby-plugin-styled-components, babel plugin babel-plugin-styled-components and styled components for styled components to work in gatsby. We can install it by running the following command.
+
+<CodeTitle title="terminal" language="shell" />
+
+```shell
+
+yarn add gatsby-plugin-styled-components styled-components babel-plugin-styled-components
+
+```
+
+We can now configure the gatsby-config.js file and add the plugin there.
+
+<CodeTitle title="page/post.js" language="js" />
+
+```js
+module.exports = {
+  plugins: [
+    // other plugins ....
+    `gatsby-plugin-styled-components`,
+  ],
+}
+```
+
+## Creating Theme/Variable File
+
+We may be having a set of colors, fonts, and other variables that we want to use throughout the project for that best way is to create a theme/variable file and use it, so that if you want to make any changes you don't have to change it in every single location.
+
+<CodeTitle title="src/constant/theme.js" language="js" />
+
+```js
+const color = {
+  white: "#ffffff",
+  primary: "#3340ff",
+  hoverprimary: "#4753FF",
+  default: "#27213C",
+  success: "#40CE89",
+  danger: "#EA143F",
+  warning: "#FFAE00",
+  muted: "#C0BFC0",
+}
+
+const font = {
+  heading: `Rubik, sans-serif`,
+  body: `Poppins, sans-serif`,
+}
+
+const fontWeight = {
+  heading: "400",
+  body: "300",
+}
+
+export default {
+  color,
+  font,
+  fontWeight,
+}
+```
+
+## Creating Styled Components
+
+We will be creating a simple button as an example. So create a file button.js and add the following code. The button components takes two props first is the capital prop which takes boolean value and second is color prop which takes color for background color.
+
+> To know more about Styled Components and advanced usage you can follow the docs on their [Official Website](https://styled-components.com/)
+
+<CodeTitle title="component/button.js" language="jsx" />
+
+```js
+import styled from "styled-components"
+import theme from "../constants/theme"
+
+export default styled.button`
+  border: none;
+  display: inline-block;
+  width: auto;
+  height: auto;
+  text-transform: ${props => (props.capital ? "uppercase" : "capitalize")};
+  background-color: ${props => theme.color[`${props.color}`]};
+  color: #fff;
+  padding: 1rem 2.4rem;
+  margin: 1rem;
+  border-radius: 4px;
+  letter-spacing: 1.5px;
+  font-size: 1.6rem;
+  font-family: ${theme.font.body};
+  font-weight: ${theme.fontWeight.body};
+  transition: all 0.5s;
+
+  &:hover {
+    transform: translateY(-1px);
+    outline: 0;
+  }
+`
+```
+
+Now we can import use it anywhere we like so lets import it in index.js page.
+
+<CodeTitle title="index.js" language="jsx" />
+
+```jsx
+import React from "react"
+import Button from "../components/button"
+import Layout from "../components/layout"
+
+const IndexPage = () => (
+  <Layout>
+    <Button color="primary">button</Button>
+
+    <Button color="danger" capital={true}>
+      button
+    </Button>
+    <Button color="warning" capital={true}>
+      button
+    </Button>
+    <Button color="success" capital={false}>
+      button
+    </Button>
+  </Layout>
+)
+
+export default IndexPage
+```
+
+## Result 🔥
+
+![Result](./img/result.png)
