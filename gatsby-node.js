@@ -48,4 +48,21 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       context: { id: node.id },
     })
   })
+
+  //  create authors page
+
+  // const authors = mdxPosts.data.allMdx.edges
+
+  // authors.map(({ node }, index) => {
+  //   createPage({
+  //     // this is the path of post we will specify the path in posts frontmatter
+  //     path: node.frontmatter.path,
+  //     // This component/Layout for our MDX posts
+  //     // change the path of layout according to your folder structure.
+  //     component: path.resolve(`./src/pages/author.tsx`),
+  //     // We will use the id (which is unique) to query our post data later onn.
+
+  //     context: { id: node.id },
+  //   })
+  // })
 }

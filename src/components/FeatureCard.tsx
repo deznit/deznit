@@ -3,7 +3,6 @@ import { Link } from "gatsby"
 import Img from "gatsby-image"
 
 const FeatureCard = ({ post }) => {
-  console.log(post)
   const url = post.frontmatter.path
   const feature_image =
     post.frontmatter.feature_image &&
