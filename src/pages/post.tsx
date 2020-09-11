@@ -4,13 +4,18 @@ import Layout from "../components/layout"
 import CodeTitle from "../components/CodeTitle"
 import Img from "gatsby-image"
 import { MDXRenderer } from "gatsby-plugin-mdx"
-
 import { MDXProvider } from "@mdx-js/react"
+import SEO from "../components/seo"
 
 const Post = ({ data }) => {
   const shortcodes = { CodeTitle }
   return (
     <Layout isHome={false}>
+      <SEO
+        title={data.mdx.frontmatter.title}
+        description={data.mdx.excerpt}
+        image={data.mdx.frontmatter.feature_image.childImageSharp.fluid.src}
+      ></SEO>
       <div className="container">
         <article className="content">
           <h1 className="content-title">{data.mdx.frontmatter.title}</h1>
@@ -54,6 +59,7 @@ export const postQuery = graphql`
     mdx(id: { eq: $id }) {
       id
       body
+      excerpt(pruneLength: 250)
       frontmatter {
         author
         date

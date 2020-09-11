@@ -14,6 +14,7 @@ const IndexPage = ({ data }) => {
 
   return (
     <Layout isHome>
+      <SEO></SEO>
       <div className="container">
         <section>
           {posts.map(
@@ -65,7 +66,7 @@ export const pageQuery = graphql`
             }
             author_image
           }
-          excerpt
+          excerpt(pruneLength: 150)
         }
       }
     }
