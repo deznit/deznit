@@ -864,19 +864,20 @@ h6 {
   /* align-items: center; */
   justify-content: center;
   margin: 10px 10px 0 0;
-  color: var(--color-white);
+  color: inherit;
 }
 .feature-card-title {
   margin: 10px 0 10px 0;
   padding: 0;
   font-size: 30px;
-  color: hsla(0, 0%, 100%, 0.85);
+  color: var(--color-white);
 }
 .feature-author-block {
   margin-top: 20px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  color: var(--color-white);
 }
 
 .post-card {

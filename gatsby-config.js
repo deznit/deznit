@@ -2,8 +2,9 @@ module.exports = {
   // pathPrefix: "/deznit",
   siteMetadata: {
     title: `Deznit`,
-    description: `Lets Learn Something New`,
+    description: `Blog posts on issue I faced while programming and how I solved it. We all can learn something new.`,
     author: `@deznit`,
+    image: `images/header_image.png`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
