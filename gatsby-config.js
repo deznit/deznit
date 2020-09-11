@@ -4,7 +4,7 @@ module.exports = {
     title: `Deznit`,
     description: `Blog posts on issue I faced while programming and how I solved it. We all can learn something new.`,
     author: `@deznit`,
-    image: `images/header_image.png`,
+    image: `/images/header_image.png`,
     url: "https://deznit.com",
   },
   plugins: [
