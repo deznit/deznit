@@ -9,10 +9,16 @@ import React from "react"
 import { Helmet } from "react-helmet"
 import { useStaticQuery, graphql } from "gatsby"
 
+type ImageType = {
+  src: string
+  height: number
+  width: number
+}
+
 type SeoProps = {
   description?: string
   lang?: string
-  image?: string
+  image?: ImageType
   title: string
 }
 
@@ -26,6 +32,7 @@ const SEO = ({ description, lang = "en", image, title }: SeoProps) => {
             description
             author
             image
+            url
           }
         }
       }
@@ -35,13 +42,17 @@ const SEO = ({ description, lang = "en", image, title }: SeoProps) => {
   const metaDescription = description
     ? description
     : site.siteMetadata.description
-  const metaImage = image ? image : site.siteMetadata.image
+  let metaImage: ImageType = image
+    ? image
+    : { src: site.siteMetadata.image, width: 1200, height: 670 }
+  metaImage.src = `${site.siteMetadata.url}${image.src}`
+
   return (
     <Helmet
       htmlAttributes={{
         lang,
       }}
-      title={title}
+      title={metaTitle}
       titleTemplate={`%s | ${site.siteMetadata.title}`}
       meta={[
         {
@@ -50,7 +61,7 @@ const SEO = ({ description, lang = "en", image, title }: SeoProps) => {
         },
         {
           property: `og:title`,
-          content: title,
+          content: metaTitle,
         },
         {
           property: `og:description`,
@@ -74,7 +85,7 @@ const SEO = ({ description, lang = "en", image, title }: SeoProps) => {
         },
         {
           name: `twitter:title`,
-          content: title,
+          content: metaTitle,
         },
         {
           name: `twitter:description`,
@@ -82,7 +93,15 @@ const SEO = ({ description, lang = "en", image, title }: SeoProps) => {
         },
         {
           property: "og:image",
-          content: metaImage,
+          content: metaImage.src,
+        },
+        {
+          property: "og:image:width",
+          content: metaImage.width,
+        },
+        {
+          property: "og:image:height",
+          content: metaImage.height,
         },
       ]}
     />
