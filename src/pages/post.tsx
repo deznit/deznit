@@ -14,7 +14,7 @@ const Post = ({ data }) => {
       <SEO
         title={data.mdx.frontmatter.title}
         description={data.mdx.excerpt}
-        image={data.mdx.frontmatter.feature_image.childImageSharp.fluid.src}
+        image={data.mdx.frontmatter.feature_image.childImageSharp.fixed.src}
       ></SEO>
       <div className="container">
         <article className="content">
@@ -71,6 +71,9 @@ export const postQuery = graphql`
           childImageSharp {
             fluid {
               ...GatsbyImageSharpFluid
+            }
+            fixed {
+              ...GatsbyImageSharpFixed
             }
           }
         }

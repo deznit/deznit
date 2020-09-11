@@ -31,7 +31,7 @@ const SEO = ({ description, lang = "en", image, title }: SeoProps) => {
       }
     `
   )
-
+  const metaTitle = title ? title : site.siteMetadata.title
   const metaDescription = description
     ? description
     : site.siteMetadata.description
