@@ -33,9 +33,35 @@ const Header = ({ siteTitle, isHome }) => (
             </Link>
           </div>
           <div className="site-nav-right">
-            <Link className="site-nav-button" to="/contact">
-              CONTACT
-            </Link>
+            <a
+              href="https://join.slack.com/t/deznitworkspace/shared_invite/zt-hgillkxw-uxF_Tp7J5FcPT8fDe37Pyw"
+              target="_blank"
+            >
+              <img
+                className="social-icons"
+                src="/icons/slack_icon.svg"
+                width="30px"
+                height="30px"
+              />
+            </a>
+
+            <a href="https://github.com/orgs/deznit/" target="_blank">
+              <img
+                className="social-icons"
+                src="/icons/github_icon.svg"
+                width="30px"
+                height="30px"
+              />
+            </a>
+
+            <a href="https://gitter.im/deznit/community" target="_blank">
+              <img
+                className="social-icons"
+                src="/icons/gitter_icon.svg"
+                width="30px"
+                height="30px"
+              />
+            </a>
           </div>
         </nav>
       </div>

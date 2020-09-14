@@ -9,27 +9,46 @@ import SEO from "../components/seo"
 
 const Post = ({ data }) => {
   const shortcodes = { CodeTitle }
+  const frontmatter = data.mdx.frontmatter
   return (
     <Layout isHome={false}>
       <SEO
-        title={data.mdx.frontmatter.title}
+        title={frontmatter.title}
         description={data.mdx.excerpt}
-        image={data.mdx.frontmatter.feature_image.childImageSharp.resize}
+        image={frontmatter.feature_image.childImageSharp.resize}
       ></SEO>
       <div className="container">
         <article className="content">
-          <h1 className="content-title">{data.mdx.frontmatter.title}</h1>
+          <h1 className="content-title">{frontmatter.title}</h1>
           <div className="post-author">
-            {data.mdx.frontmatter.author}
-            <span className="post-date">{data.mdx.frontmatter.date}</span>
+            {frontmatter.author}
+            <span className="post-date">{frontmatter.date}</span>
           </div>
+          <section className="tags-container">
+            <div>
+              {frontmatter.tags ? (
+                <span className="btn btn-dark">#{frontmatter.tags}</span>
+              ) : null}
+            </div>
+            <div className="tags-container-right">
+              {frontmatter.repo ? (
+                <a href={frontmatter.repo} target="_blank">
+                  <span className="btn btn-primary">
+                    <img src="/icons/github.svg" width="22px" height="22px" />
+                    <span>Code</span>
+                  </span>
+                </a>
+              ) : null}
+            </div>
+          </section>
 
-          {data.mdx.frontmatter.feature_image ? (
+          {frontmatter.feature_image ? (
             <Img
               className="post-feature-image"
-              fluid={data.mdx.frontmatter.feature_image.childImageSharp.fluid}
+              fluid={frontmatter.feature_image.childImageSharp.fluid}
             />
           ) : null}
+
           <section className="post-full-content">
             {/* The main post content */}
             {/* <section
@@ -80,6 +99,7 @@ export const postQuery = graphql`
           }
         }
         author_image
+        repo
       }
     }
   }
