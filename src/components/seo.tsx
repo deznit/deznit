@@ -39,7 +39,6 @@ const SEO = ({ description, lang = "en", image, title }: SeoProps) => {
     `
   )
 
-  console.log(image)
   const metaTitle = title ? title : site.siteMetadata.title
   const metaDescription = description
     ? description
@@ -48,7 +47,7 @@ const SEO = ({ description, lang = "en", image, title }: SeoProps) => {
     ? image
     : { src: site.siteMetadata.image, width: 1200, height: 670 }
   metaImage.src = `${site.siteMetadata.url}${metaImage.src}`
-  console.log(metaImage)
+
   return (
     <Helmet
       htmlAttributes={{

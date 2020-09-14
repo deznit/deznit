@@ -1,0 +1,266 @@
+---
+path: "/adding-seo-in-gatsby"
+date: "13 September, 2020"
+author: "Anoop Nair"
+author_image: "images/authorImages/anoop.png"
+feature_image: "./img/feature.png"
+title: "Adding SEO in Gatsby SIte"
+tags: "Gatsby"
+featured: true
+---
+
+> With the help of this blog post you can add basic SEO for your gatsby website, and set data for social sharing cards
+
+## Introduction
+
+You are here reading this blog so you probably know about SEO and its importance. So let's jump right in to the fun stuff.
+
+The default starter already have some SEO setup, you only have to enhance it for social sharing cards, but here we will start from scratch so that it can be used in any site. The first thing we want to add is [React Helmet](https://www.npmjs.com/package/react-helmet). This is a react component where we add our meta tags, and it adds our tags to the document head tag.
+
+<CodeTitle title="terminal" language="shell" />
+
+```shell
+
+yarn add react-helmet
+
+```
+
+> I will be using typescript in blog posts.
+
+## Default Config
+
+First we have to specify global meta data defaults in gatsby-config.js file which we will later query in our seo component using [useStaticQuery](https://www.gatsbyjs.com/docs/use-static-query/) hook.
+
+<CodeTitle title="gatsby-config.js" language="js" />
+
+```js
+module.exports = {
+  siteMetadata: {
+    title: `Deznit`,
+    description: `Blog posts on issue I faced while programming and how I solved it. We all can learn something new.`,
+    author: `@deznit`,
+    image: `/images/header_image.png`,
+    url: "https://deznit.com",
+  },
+  plugins[
+      ...
+    //   all other plugins here
+      ]
+}
+```
+
+## SEO Component
+
+We can create a SEO component, where we will specify the meta tags data and data for social sharing cards.
+
+<CodeTitle title="components/SEO.tsx" language="js" />
+
+```tsx
+import React from "react"
+import { Helmet } from "react-helmet"
+import { useStaticQuery, graphql } from "gatsby"
+
+const SEO = () => {
+  return <Helmet />
+}
+
+export default SEO
+```
+
+With initial setup done we can now query the data that we specified in gatsby-config use useStaticQuery hook inside the SEO function
+
+```ts
+const { site } = useStaticQuery(
+  graphql`
+    query {
+      site {
+        siteMetadata {
+          title
+          description
+          author
+          image
+          url
+        }
+      }
+    }
+  `
+)
+```
+
+We have to add some props to the SEO component so that we can use it in post component and add seo data for individual posts dynamically. And then we will use data if props available then from there or the default value to add meta data and other head tags like title.
+
+All the meta tags that have name starting with og(Open Graph) is used by fb social sharing card and other ones are for twitter sharing card.
+
+<CodeTitle title="components/SEO.tsx" language="js" />
+
+```tsx
+type ImageType = {
+  src: string
+  height: number
+  width: number
+}
+
+type SeoProps = {
+  description?: string
+  lang?: string
+  image?: ImageType
+  title: string
+}
+
+const SEO = ({ description, lang = "en", image, title }: SeoProps) => {
+  const { site } = useStaticQuery(
+    graphql`
+      query {
+        site {
+          siteMetadata {
+            title
+            description
+            author
+            image
+            url
+          }
+        }
+      }
+    `
+  )
+
+  // if no props specified we use default data
+  // that we specified in gatsby config and queried above
+
+  const metaTitle = title ? title : site.siteMetadata.title
+
+  const metaDescription = description
+    ? description
+    : site.siteMetadata.description
+
+  // specifying height and width is needed for fb sharing card
+  // otherwise on first share no image will be shown,
+  //  and it complains about height and width not specified
+  let metaImage: ImageType = image
+    ? image
+    : { src: site.siteMetadata.image, width: 1200, height: 670 }
+
+  // concatinating site url to the image
+  // twitter card was not showing image without it
+  metaImage.src = `${site.siteMetadata.url}${metaImage.src}`
+
+  return (
+    <Helmet
+      htmlAttributes={{
+        lang,
+      }}
+      title={metaTitle}
+      titleTemplate={`%s | ${site.siteMetadata.title}`}
+      meta={[
+        {
+          name: `description`,
+          content: metaDescription,
+        },
+        {
+          property: `og:title`,
+          content: metaTitle,
+        },
+        {
+          property: `og:description`,
+          content: metaDescription,
+        },
+        {
+          property: `og:type`,
+          content: `website`,
+        },
+        {
+          name: `twitter:card`,
+          content: `summary_large_image`,
+        },
+        {
+          name: `twitter:site`,
+          content: site.siteMetadata.title,
+        },
+        {
+          name: `twitter:creator`,
+          content: site.siteMetadata.author,
+        },
+        {
+          name: `twitter:title`,
+          content: metaTitle,
+        },
+        {
+          name: `twitter:description`,
+          content: metaDescription,
+        },
+        {
+          property: "og:image",
+          content: metaImage.src,
+        },
+        {
+          property: "og:image:width",
+          content: metaImage.width,
+        },
+        {
+          property: "og:image:height",
+          content: metaImage.height,
+        },
+      ]}
+    />
+  )
+}
+
+export default SEO
+```
+
+Now we can use the SEO component in our index page (homepage) and post page (individual post). Here we will see the example of post page.
+The post query of the page will be similar to the following code and it will differ based on your data source, markdown frontmatter or wheter you are using gatsby-transformer-sharp pluging for images or not **(So dont copy below sections blindly)**. To know more about configuring sharp plugin for Post feature image and in body MDX images [please see this post]().
+
+> To learn about building a blog with markdown please follow this [Using Styled components in gatsby post](/using-styled-components-in-gatsby-markdown-posts)
+
+<CodeTitle title="pages/post.tsx" language="tsx" />
+
+```tsx
+export const postQuery = graphql`
+  query BlogPostQuery($id: String) {
+    mdx(id: { eq: $id }) {
+      id
+      excerpt(pruneLength: 250)
+      frontmatter {
+        author
+        path
+        title
+        feature_image {
+            resize(width: 1200) {
+              src
+              height
+              width
+            }
+          }
+        }
+      }
+    }
+  }
+`
+```
+
+The next step is to use the query data in the post component, and pass props to SEO component
+
+<CodeTitle title="pages/post.tsx" language="tsx" />
+
+```tsx
+// ...
+import Layout from "../components/layout"
+import SEO from "../components/seo"
+
+const Post = ({ data }) => {
+  return (
+    <Layout>
+      <SEO
+        title={data.mdx.frontmatter.title}
+        description={data.mdx.excerpt}
+        image={data.mdx.frontmatter.feature_image.childImageSharp.resize}
+      />
+    </Layout>
+  )
+}
+```
+
+And thats it we are done with basic SEO and setting social sharing cards data. This is just the starting you should keep improving it by adding more tags like keywords etc. This is the seo setup I currently have for this blog and will update the blog when I add something to my blog SEO.
+
+Below are the results for google index and social media sharing cards.

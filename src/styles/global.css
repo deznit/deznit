@@ -555,6 +555,10 @@ h6 {
   background: var(--color-body);
 }
 
+.post-full-content strong {
+  color: var(--color-white);
+}
+
 .post-feature-image {
   margin: 0 0 3vw;
   width: 100%;
@@ -834,7 +838,7 @@ h6 {
   z-index: 100;
   background-color: var(--color-body);
   border-radius: 16px;
-
+  /* box-shadow: 0 8px 20px -5px var(--color-black); */
   /* height: 50vh; */
 }
 
@@ -885,6 +889,8 @@ h6 {
   text-decoration: none;
   background-color: var(--color-body);
   border-radius: 16px;
+  box-shadow: 0 8px 20px -5px var(--color-black);
+
   /* border: var(--color-dark-shadow) 1px solid; */
   /* box-shadow: 2px 2px 2px -2px var(--color-dark-shadow); */
 }
@@ -894,17 +900,25 @@ h6 {
   transition: all 0.25s cubic-bezier(0.02, 0.01, 0.47, 1);
 }
 
+.post-card-excerpt,
+.post-card-footer,
+.post-card-title,
+.post-card-tags {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
 .post-card-tags {
   margin: 0 0 5px 0;
   font-size: 1.2rem;
   line-height: 1.15em;
   color: var(--color-primary);
   text-transform: uppercase;
+  padding-top: 8px;
 }
 
 .post-card-title {
   margin: 0 0 10px 0;
-  padding: 0;
 }
 
 .post-card-excerpt {
@@ -927,6 +941,7 @@ h6 {
   justify-content: space-between;
   margin: 10px 0 0 0;
   color: var(--color-white);
+  padding-bottom: 8px;
 }
 
 .post-card-footer-left {
@@ -1192,6 +1207,22 @@ pre[class*="language-"] {
   hyphens: none;
 }
 
+pre[class*="language-"]::-webkit-scrollbar {
+  background-color: var(--color-black);
+  width: 5px !important;
+}
+
+pre[class*="language-"]::-webkit-scrollbar-track {
+  background-color: var(--color-black);
+  width: 5px !important;
+}
+
+pre[class*="language-"]::-webkit-scrollbar-thumb {
+  background-color: var(--color-body);
+  border-radius: 16px;
+  border: 1px solid var(--color-primary);
+}
+
 /* Code blocks */
 pre[class*="language-"] {
   padding: 0 1em 1em 1em;
@@ -1303,3 +1334,16 @@ pre[class~="language-flow"]::before {
 } */
 
 /*  --------------   feature card ----------------- */
+
+body::-webkit-scrollbar {
+  background-color: var(--color-black);
+  width: 16px;
+}
+body::-webkit-scrollbar-track {
+  background-color: var(--color-black);
+}
+body::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 16px;
+  border: 2px solid var(--color-white);
+}
