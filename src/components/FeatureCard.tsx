@@ -53,7 +53,6 @@ const FeatureCard = ({ post }) => {
           </div>
         </footer>
       </div>
-      <hr></hr>
     </Link>
   )
 }

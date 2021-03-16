@@ -8,16 +8,16 @@ import Logo from "../../static/images/logo.svg"
 const Header = ({ siteTitle, isHome }) => (
   <header
     className="site-head"
-    style={isHome ? { height: "400px" } : { height: "100px" }}
+    style={isHome ? { height: "300px" } : { height: "100px" }}
   >
-    {isHome ? (
+    {/* {isHome ? (
       <div
         className="site-skew-banner"
         style={{
           backgroundImage: `url("images/header_image.svg")`,
         }}
       ></div>
-    ) : null}
+    ) : null} */}
 
     <div className="container">
       <div className="site-mast">

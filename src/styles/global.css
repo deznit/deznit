@@ -855,6 +855,7 @@ h6 {
   grid-template-columns: 1fr 1fr 1fr;
   z-index: 100;
   position: relative;
+  margin-top: 60px;
 }
 .feature-block {
   position: relative;
@@ -864,7 +865,7 @@ h6 {
   z-index: 100;
   background-color: var(--color-body);
   border-radius: 16px;
-  /* box-shadow: 0 8px 20px -5px var(--color-black); */
+  box-shadow: 0 8px 20px -5px var(--color-black);
   /* height: 50vh; */
 }
 
@@ -877,7 +878,6 @@ h6 {
   text-decoration: none;
 }
 .feature-card-image {
-  margin: 0 0 10px 0;
   width: auto;
   height: auto;
   min-height: 300px;
@@ -898,12 +898,14 @@ h6 {
 }
 .feature-card-title {
   margin: 10px 0 10px 0;
-  padding: 0;
+  padding-left: 8px;
+  padding-right: 8px;
   font-size: 30px;
   color: var(--color-white);
 }
 .feature-author-block {
   margin-top: 20px;
+  padding: 0 10px 10px 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -1015,12 +1017,19 @@ h6 {
 @media (max-width: 680px) {
   .post-feed {
     grid-template-columns: 1fr;
+    margin-top: 20px;
   }
   .feature-block {
     grid-template-columns: 1fr;
   }
   .feature-card-image {
     min-height: 0;
+  }
+}
+
+@media (max-width: 500px) {
+  .feature-card-title {
+    font-size: 1.8rem;
   }
 }
 
@@ -1352,7 +1361,7 @@ pre[class~="language-flow"]::before {
 
 body::-webkit-scrollbar {
   background-color: var(--color-black);
-  width: 16px;
+  width: 8px;
 }
 body::-webkit-scrollbar-track {
   background-color: var(--color-black);
@@ -1360,5 +1369,5 @@ body::-webkit-scrollbar-track {
 body::-webkit-scrollbar-thumb {
   background-color: var(--color-primary);
   border-radius: 16px;
-  border: 2px solid var(--color-white);
+  /* border: 1px solid var(--color-white); */
 }
